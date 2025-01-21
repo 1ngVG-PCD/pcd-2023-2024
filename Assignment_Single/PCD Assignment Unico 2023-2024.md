@@ -5,11 +5,11 @@ L’assignment unico è articolato in due parti.
 
 **PRIMA PARTE \- programmazione concorrente**
 
-> 1) Realizzare un programma concorrente che, dato l'indirizzo di una directory D e una parola P, fornisca il numero di file PDF presenti in D (o in una qualsiasi sottodirectory, ricorsivamente)  che contengono P. D e P sono parametri del programma, passati da linea di comando. Il programma non necessita di una GUI.  
+> 0) Realizzare un programma concorrente che, dato l'indirizzo di una directory D e una parola P, fornisca il numero di file PDF presenti in D (o in una qualsiasi sottodirectory, ricorsivamente)  che contengono P. D e P sono parametri del programma, passati da linea di comando. Il programma non necessita di una GUI.  
 >     
 >   Per l’elaborazione di file PDF nel repo del corso si usa la libreria PDFBox (specificata nel file build.gradle), con semplice esempio di utilizzo (pcd.ass\_single.part1.example.ExtractTextSimple) in cui dato un documento PDF caricato da file se ne ottiene il testo corrispondente (come stringa).  
      
->2) Estendere il programma al punto precedente includendo una GUI con:  
+>1) Estendere il programma al punto precedente includendo una GUI con:  
 >   * Input box per specificare i parametri  
 >   * pulsanti start/stop/suspend/resume per avviare/fermare/sospendere/riprendere zool'elaborazione  
 >   * output box dove sia visualizzato man mano  il numero di file analizzati (in totale) fino a quel momento, il numero di file PDF trovati e il numero di file PDF contenenti la parola P. 

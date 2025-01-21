@@ -1,6 +1,7 @@
+
 # 1. Analisi del problema
 
-> **Obiettivo:** Dato un indirizzo di directory `D` e una parola `P`, contare quanti file PDF contengono `P`.
+> **Obbiettivo:** Dato un indirizzo di directory `D` e una parola `P`, contare quanti file PDF contengono `P`.
 > 
 >**Task:** Ogni task dovrà eseguire la lettura di un file PDF per cercare la parola.
 > 

@@ -12,3 +12,4 @@ plugins {
 
 rootProject.name = "pcd-2023-2024"
 include("app")
+include("Assignment_Single")
