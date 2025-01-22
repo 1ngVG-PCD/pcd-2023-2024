@@ -33,6 +33,9 @@ public class ContainsWord {
 
             // Cerca la parola
             return text.contains(word);
+        }catch (IOException e) {
+            System.err.println("Errore durante la lettura del file PDF: " + pdfFile.getName());
+            return false;
         }
     }
 }

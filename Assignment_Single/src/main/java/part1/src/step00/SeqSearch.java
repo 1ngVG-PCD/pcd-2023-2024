@@ -8,7 +8,6 @@ import java.util.List;
 
 public class SeqSearch {
 
-
     /**
      * Metodo `run`: Verifica la presenza di una parola in una lista di file PDF.
      *
