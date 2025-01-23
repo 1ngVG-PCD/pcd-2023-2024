@@ -25,11 +25,11 @@ public class ConcurrentSearch {
         int bufferSize = Math.min(pdfs.size(), Runtime.getRuntime().availableProcessors() * 2);
         Monitor monitor = new Monitor(bufferSize);
 
-        // Avvio dei thread worker
+        // Avvio dei thread worker tramite la factory
         int numThreads = Runtime.getRuntime().availableProcessors(); // Numero di core disponibili
         Thread[] workers = new Thread[numThreads];
         for (int i = 0; i < numThreads; i++) {
-            workers[i] = new Worker(monitor, word);
+            workers[i] = WorkerFactory.createWorker(monitor, word);
             workers[i].start();
         }
 

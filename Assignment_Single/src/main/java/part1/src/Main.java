@@ -29,6 +29,7 @@ public class Main {
         System.out.println("1) Concorrente con uso di monitor e worker");
         System.out.print("Inserisci numero:   ");
         int searchingMod = scanner.nextInt();
+
         System.out.println("Metodo" + searchingMod + "  ||Ricerca in corso");
 
         List<File> pdfs = getPdfFiles(directoryPath);
