@@ -2,6 +2,7 @@ package part1.src;
 
 import part1.src.step00.SeqSearch;
 import part1.src.step01.ConcurrentSearch;
+import part1.src.step02.VirtualThreadSearch;
 
 import java.io.File;
 import java.util.List;
@@ -12,7 +13,7 @@ import static part1.src.services.ScanDirectory.toStringList;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         Scanner scanner = new Scanner(System.in);
 
@@ -27,6 +28,7 @@ public class Main {
         System.out.println("Scegli come effettuare l'operaione:");
         System.out.println("0) Sequenziale");
         System.out.println("1) Concorrente con uso di monitor e worker");
+        System.out.println("2) Concorrente con Virtual Threads");
         System.out.print("Inserisci numero:   ");
         int searchingMod = scanner.nextInt();
 
@@ -52,6 +54,9 @@ public class Main {
             case 1:
                 ConcurrentSearch concurrentSearch = new ConcurrentSearch();
                 result = concurrentSearch.run(pdfs, searchWord);
+            case 2:
+                VirtualThreadSearch virtualThreadSearch = new VirtualThreadSearch();
+                result = virtualThreadSearch.run(pdfs, searchWord);
 
         }
         System.out.println("La parola \"" + searchWord + "\" è contenuta in " + result + " file PDF.");
