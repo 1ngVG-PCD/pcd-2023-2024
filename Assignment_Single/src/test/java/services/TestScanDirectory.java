@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import part1.src.services.ScanDirectory;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,5 +35,18 @@ public class TestScanDirectory {
 
         // Verifica che il numero di file sia corretto
         assertEquals(300, pdfs.size(), "La directory dovrebbe contenere esattamente 300 file PDF");
+    }
+
+    @Test
+    void testToStringList() {
+        File directory = new File("C:\\Users\\giann\\Desktop\\PCD\\pcd-2023-2024\\Assignment_Single\\src\\main\\java\\part1\\TestSet\\Short");
+        List<File> pdfs = ScanDirectory.getPdfFiles(directory);
+        List<String> names = ScanDirectory.toStringList(pdfs);
+
+        // Lista attesa dei risultati
+        List<String> expected = new ArrayList<>();
+        expected.add("Parola.pdf");
+
+        assertEquals(expected, names, "La directory dovrebbe contenere esattamente 1 file PDF di nome Parola.pdf, invece: " + names);
     }
 }
