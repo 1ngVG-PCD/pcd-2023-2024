@@ -31,11 +31,12 @@ public class ContainsWord {
             stripper.setSortByPosition(true); // Ordina per posizione, utile per layout complessi
             String text = stripper.getText(document);
 
-            // Cerca la parola
-            return text.contains(word);
+            // Cerca la parola (case insensitive)
+            return text.toLowerCase().contains(word.toLowerCase());
         }catch (IOException e) {
             System.err.println("Errore durante la lettura del file PDF: " + pdfFile.getName());
             return false;
         }
     }
+
 }

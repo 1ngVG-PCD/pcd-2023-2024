@@ -36,4 +36,16 @@ public class TestContainsWord {
             assertFalse(search.containsWord(pdfFile, word));
         }
     }
+
+    @Test
+    void testContainsWorldCaseInsensitive() throws IOException {
+        File directoryPath = new File("C:\\Users\\giann\\Desktop\\PCD\\pcd-2023-2024\\Assignment_Single\\src\\main\\java\\part1\\TestSet\\Short");
+        List<File> pdfs = getPdfFiles(directoryPath);
+        String word = "pArOlA";
+        ContainsWord search = new ContainsWord();
+
+        for (File pdfFile : pdfs){
+            assertTrue(search.containsWord(pdfFile, word));
+        }
+    }
 }
