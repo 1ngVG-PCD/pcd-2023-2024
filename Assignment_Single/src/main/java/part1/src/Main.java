@@ -3,6 +3,7 @@ package part1.src;
 import part1.src.step00.SeqSearch;
 import part1.src.step01.ConcurrentSearch;
 import part1.src.step02.VirtualThreadSearch;
+import part1.src.step03.TaskBasedSearch;
 
 import java.io.File;
 import java.util.List;
@@ -57,7 +58,9 @@ public class Main {
             case 2:
                 VirtualThreadSearch virtualThreadSearch = new VirtualThreadSearch();
                 result = virtualThreadSearch.run(directoryPath, searchWord);
-
+            case 3:
+                TaskBasedSearch taskBasedSearch = new TaskBasedSearch();
+                result = taskBasedSearch.run(directoryPath, searchWord);
         }
         System.out.println("La parola \"" + searchWord + "\" è contenuta in " + result + " file PDF.");
 

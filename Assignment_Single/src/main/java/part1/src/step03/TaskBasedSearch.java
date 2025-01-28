@@ -4,68 +4,57 @@ import part1.src.services.ContainsWord;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * La classe {@code TaskBasedSearch} implementa una ricerca concorrente basata su task,
+ * sfruttando {@code ExecutorService} per gestire la scansione della directory e la ricerca nei file PDF.
+ */
 public class TaskBasedSearch {
 
+    //Creiamo una coda 4 volte il numero di processori per evitare he si formino code, essendo che i PDF sono file "veloci".
+    private static final int QUEUE_CAPACITY = Runtime.getRuntime().availableProcessors() * 4;
+
     /**
-     * Esegue la ricerca di una parola specificata in una lista di file PDF,
-     * utilizzando un approccio a task e un pool di thread.
+     * Esegue la ricerca di una parola nei file PDF di una directory,
+     * gestendo i task tramite un pool di thread e una coda condivisa.
      *
-     * @param pdfs La lista dei file PDF da analizzare.
-     * @param word La parola da cercare nei file.
+     * @param directory La directory da analizzare.
+     * @param word      La parola da cercare nei file.
      * @return Il numero di file PDF in cui è stata trovata la parola.
-     * @throws InterruptedException Se il thread principale viene interrotto durante l'esecuzione.
+     * @throws InterruptedException Se il thread principale viene interrotto.
      */
-    public int run(List<File> pdfs, String word) throws InterruptedException {
-        // Crea un ExecutorService con un pool di thread fisso
-        int numThreads = Runtime.getRuntime().availableProcessors();
-        ExecutorService executor = Executors.newFixedThreadPool(numThreads);
+    public int run(File directory, String word) throws InterruptedException {
+        BlockingQueue<File> fileQueue = new LinkedBlockingQueue<>(QUEUE_CAPACITY);
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicInteger resultCount = new AtomicInteger(0);
 
-        // Lista di Future per raccogliere i risultati
-        List<Future<Boolean>> futures = new ArrayList<>();
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-        try {
-            // Invia un task per ogni file al pool di thread
-            for (File pdfFile : pdfs) {
-                futures.add(executor.submit(() -> containsWord(pdfFile, word)));
-            }
+        // Task per la scansione della directory
+        executor.submit(new DirectoryScanner(directory, fileQueue, latch));
 
-            // Raccoglie i risultati dai Future
-            int resultCount = 0;
-            for (Future<Boolean> future : futures) {
-                try {
-                    if (future.get()) { // Attende e ottiene il risultato del task
-                        resultCount++;
-                    }
-                } catch (Exception e) {
-                    System.err.println("Errore durante l'elaborazione di un task: " + e.getMessage());
-                }
-            }
-
-            return resultCount; // Restituisce il numero di file trovati
-        } finally {
-            // Arresta l'ExecutorService e attende la terminazione
-            executor.shutdown();
-            while (!executor.isTerminated()) {
-                Thread.onSpinWait();
-            }
+        // Task per processare i file PDF
+        int numWorkers = Runtime.getRuntime().availableProcessors();
+        for (int i = 0; i < numWorkers; i++) {
+            executor.submit(new FileProcessor(fileQueue, word, resultCount));
         }
-    }
 
-    /**
-     * Metodo helper per verificare se un file contiene una parola specifica.
-     *
-     * @param pdfFile Il file PDF da analizzare.
-     * @param word    La parola da cercare.
-     * @return True se la parola è trovata, false altrimenti.
-     * @throws IOException Se si verifica un errore durante la lettura del file.
-     */
-    private boolean containsWord(File pdfFile, String word) throws IOException {
-        return new ContainsWord().containsWord(pdfFile, word);
+        // Aspetta la fine della scansione
+        latch.await();
+
+        // Aggiunge token di terminazione per i worker
+        for (int i = 0; i < numWorkers; i++) {
+            fileQueue.put(FileSentinel.getSentinel());
+        }
+
+        // Arresta il pool di thread e aspetta la terminazione
+        executor.shutdown();
+        executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+
+        return resultCount.get();
     }
 }
+
