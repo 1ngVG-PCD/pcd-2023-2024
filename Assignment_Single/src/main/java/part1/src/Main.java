@@ -53,7 +53,7 @@ public class Main {
                 break;
             case 1:
                 ConcurrentSearch concurrentSearch = new ConcurrentSearch();
-                result = concurrentSearch.run(pdfs, searchWord);
+                result = concurrentSearch.run(directoryPath, searchWord);
             case 2:
                 VirtualThreadSearch virtualThreadSearch = new VirtualThreadSearch();
                 result = virtualThreadSearch.run(pdfs, searchWord);
