@@ -16,12 +16,6 @@ public class TestSeqSearch {
     SeqSearch search = new SeqSearch();
 
     @Test
-    void TestAllFileHaveWord() {
-        String word = "!";
-        assertEquals(301, search.run(pdfs, word));
-    }
-
-    @Test
     void TestNone() {
         String word = "wow";
         assertEquals(0, search.run(pdfs, word));

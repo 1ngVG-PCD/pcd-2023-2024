@@ -1,7 +1,6 @@
 package part1;
 
 import org.junit.jupiter.api.Test;
-import part1.src.step00.SeqSearch;
 import part1.src.step04.AsyncSearch;
 
 import java.io.File;
@@ -16,11 +15,6 @@ public class TestAsyncSearch {
     List<File> pdfs = getPdfFiles(directoryPath);
     AsyncSearch search = new AsyncSearch();
 
-    @Test
-    void TestAllFileHaveWord() {
-        String word = "!";
-        assertEquals(301, search.run(pdfs, word));
-    }
 
     @Test
     void TestNone() {

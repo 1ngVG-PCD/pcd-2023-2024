@@ -21,6 +21,11 @@ public class Latch {
         this.count = count;
     }
 
+    public synchronized void increment() {
+        count++; // Aggiunge un worker alla sincronizzazione
+    }
+
+
     /**
      * Decrementa il contatore di uno. Se il contatore raggiunge il valore zero,
      * risveglia tutti i thread che sono in attesa sul metodo {@code await()}.

@@ -56,7 +56,7 @@ public class Main {
                 result = concurrentSearch.run(directoryPath, searchWord);
             case 2:
                 VirtualThreadSearch virtualThreadSearch = new VirtualThreadSearch();
-                result = virtualThreadSearch.run(pdfs, searchWord);
+                result = virtualThreadSearch.run(directoryPath, searchWord);
 
         }
         System.out.println("La parola \"" + searchWord + "\" è contenuta in " + result + " file PDF.");

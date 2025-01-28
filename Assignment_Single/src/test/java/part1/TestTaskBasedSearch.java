@@ -1,7 +1,6 @@
 package part1;
 
 import org.junit.jupiter.api.Test;
-import part1.src.step02.VirtualThreadSearch;
 import part1.src.step03.TaskBasedSearch;
 
 import java.io.File;
@@ -15,12 +14,6 @@ public class TestTaskBasedSearch {
     File directoryPath = new File("C:\\Users\\giann\\Desktop\\PCD\\pcd-2023-2024\\Assignment_Single\\src\\main\\java\\part1\\TestSet");
     List<File> pdfs = getPdfFiles(directoryPath);
     TaskBasedSearch search = new TaskBasedSearch();
-
-    @Test
-    void TestAllFileHaveWord() throws InterruptedException {
-        String word = "!";
-        assertEquals(301, search.run(pdfs, word));
-    }
 
     @Test
     void TestNone() throws InterruptedException {

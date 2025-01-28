@@ -1,39 +1,43 @@
 package part1.src.step02;
 
 import java.io.File;
-import java.util.List;
 
 /**
- * La classe {@code VirtualThreadSearch} implementa una ricerca concorrente basata su Virtual Threads
- * per cercare una parola specifica all'interno di una lista di file PDF.
- * Utilizza un contatore thread-safe ({@code AtomInt}) e un latch personalizzato ({@code Latch})
- * per sincronizzare i thread.
+ * La classe {@code VirtualThreadSearch} implementa una ricerca concorrente basata su Virtual Threads.
+ * Scansiona la directory e processa i file PDF in parallelo, utilizzando un Monitor personalizzato.
  */
 public class VirtualThreadSearch {
 
     /**
-     * Esegue la ricerca di una parola specificata in una lista di file PDF.
-     * Ogni file PDF viene elaborato in modo concorrente tramite un Virtual Thread.
+     * Esegue la ricerca di una parola nei file PDF di una directory.
+     * La scansione della directory e l'analisi dei file avvengono in parallelo con Virtual Threads.
      *
-     * @param pdfs  La lista dei file PDF da analizzare.
-     * @param word  La parola da cercare nei file.
+     * @param directory La directory da analizzare.
+     * @param word      La parola da cercare nei file.
      * @return Il numero di file PDF in cui è stata trovata la parola.
-     * @throws InterruptedException Se il thread principale viene interrotto durante l'attesa
-     *                              che tutti i Virtual Threads terminino.
+     * @throws InterruptedException Se il thread principale viene interrotto.
      */
-    public int run(List<File> pdfs, String word) throws InterruptedException {
-        AtomInt resultCount = new AtomInt(0); // Contatore dei risultati
-        Latch latch = new Latch(pdfs.size()); // Contatore per sincronizzazione
+    public int run(File directory, String word) throws InterruptedException {
+        Monitor monitor = new Monitor(10); // Bounded buffer per sincronizzazione
+        AtomInt resultCount = new AtomInt(0);
+        Latch latch = new Latch(1); // 1 per la scansione, poi aumenteremo con i worker
 
-        // Crea e avvia un Virtual Thread per ogni file PDF
-        for (File pdfFile : pdfs) {
-            Thread worker = VirtualThreadWorkerFactory.createWorker(pdfFile, word, resultCount, latch);
-            worker.start(); // Avvia il Virtual Thread
+        // Virtual Thread per la scansione della directory
+        Thread.ofVirtual().start(new DirectoryScanner(directory, monitor, latch));
+
+        // Virtual Threads per elaborare i file PDF
+        while (true) {
+            File pdfFile = monitor.getFile();
+            if (pdfFile == FileSentinel.getSentinel()) {
+                break; // Termina il loop quando arriva la sentinella
+            }
+
+            latch.increment(); // Aggiunge un worker al conteggio del latch
+            Thread.ofVirtual().start(VirtualThreadWorkerFactory.createWorker(pdfFile, word, resultCount, latch));
         }
 
-        // Attende che tutti i thread terminino
+        // Attende la terminazione di tutti i Virtual Threads
         latch.await();
         return resultCount.get();
     }
 }
-
