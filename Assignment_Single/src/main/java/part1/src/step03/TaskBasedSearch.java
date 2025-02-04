@@ -1,10 +1,7 @@
 package part1.src.step03;
 
-import part1.src.services.ContainsWord;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 

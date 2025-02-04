@@ -1,16 +1,18 @@
-package part1;
+package part1.step02;
 
 import org.junit.jupiter.api.Test;
-import part1.src.step03.TaskBasedSearch;
+import part1.src.step02.VirtualThreadSearch;
 
 import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TestTaskBasedSearch {
+public class TestVirtualThreadSearch {
 
     File directoryPath = new File("C:\\Users\\giann\\Desktop\\PCD\\pcd-2023-2024\\Assignment_Single\\src\\main\\java\\part1\\TestSet");
-    TaskBasedSearch search = new TaskBasedSearch();
+
+    VirtualThreadSearch search = new VirtualThreadSearch();
+
 
     @Test
     void TestNone() throws InterruptedException {

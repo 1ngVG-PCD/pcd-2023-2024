@@ -1,19 +1,16 @@
-package part1;
+package part1.step06;
 
 import org.junit.jupiter.api.Test;
-import part1.src.step02.VirtualThreadSearch;
+import part1.src.step05.ReactiveSearch;
 
 import java.io.File;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static part1.src.services.ScanDirectory.getPdfFiles;
 
-public class TestVirtualThreadSearch {
+public class TestActorsSearch {
 
     File directoryPath = new File("C:\\Users\\giann\\Desktop\\PCD\\pcd-2023-2024\\Assignment_Single\\src\\main\\java\\part1\\TestSet");
-
-    VirtualThreadSearch search = new VirtualThreadSearch();
+    ActorsSearch search = new ActorsSearch();
 
 
     @Test
