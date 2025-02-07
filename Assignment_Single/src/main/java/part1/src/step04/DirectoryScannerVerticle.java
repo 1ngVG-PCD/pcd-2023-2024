@@ -5,7 +5,6 @@ import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
-import io.vertx.core.file.FileSystem;
 
 import java.io.File;
 
@@ -42,7 +41,7 @@ public class DirectoryScannerVerticle extends AbstractVerticle {
             return promise.future();
         }
 
-        //PDFBox
+
         File[] files = directory.listFiles();
         if (files != null) {
             EventBus eventBus = vertx.eventBus();
@@ -56,6 +55,7 @@ public class DirectoryScannerVerticle extends AbstractVerticle {
                 }
             }
         }
+
 
         return promise.future();
     }

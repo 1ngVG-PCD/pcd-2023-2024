@@ -21,6 +21,8 @@ public class DynamicQueueVerticle extends AbstractVerticle {
         // Registra un consumer per ricevere il percorso della directory
         eventBus.consumer("pdf.file.found", this::addToQueue);
 
+        eventBus.consumer("get.file.from.queue", this::getFileFromQueue);
+
         // Completa la promise per indicare che il verticle è avviato con successo
         startPromise.complete();
     }
@@ -33,6 +35,15 @@ public class DynamicQueueVerticle extends AbstractVerticle {
 
         // Opzionale: Notifica che il file è stato aggiunto alla coda
         message.reply("File aggiunto alla coda: " + filePath);
+    }
+
+    private void getFileFromQueue(Message<String> message) {
+        if (fileQueue.isEmpty()) {
+            message.reply(""); // Restituisce una stringa vuota se la coda è vuota
+        } else {
+            String filePath = fileQueue.poll(); // Rimuove e restituisce il primo file dalla coda
+            message.reply(filePath);
+        }
     }
 
     public Queue<String> getFileQueue() {
