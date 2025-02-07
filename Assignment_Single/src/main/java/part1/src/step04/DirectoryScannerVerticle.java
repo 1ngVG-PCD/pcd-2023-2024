@@ -1,40 +1,62 @@
 package part1.src.step04;
 
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.json.JsonObject;
+import io.vertx.core.Future;
+import io.vertx.core.Promise;
+import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.eventbus.Message;
+import io.vertx.core.file.FileSystem;
+
 import java.io.File;
 
 public class DirectoryScannerVerticle extends AbstractVerticle {
-    private File directory;
 
     @Override
-    public void start() {
-        String dirPath = config().getString("directory");
-        if (dirPath == null) {
-            System.err.println("Errore: Directory non specificata!");
-            return;
-        }
-        directory = new File(dirPath);
+    public void start(Promise<Void> startPromise) {
 
-        vertx.executeBlocking(promise -> {
-            scanDirectory(directory);
-            System.out.println("Scansione terminata");
-            vertx.eventBus().send("scanner.done", "done");
-            promise.complete();
-        });
+        EventBus eventBus = vertx.eventBus();
+
+        // Registra un consumer per ricevere il percorso della directory
+        eventBus.consumer("directory.request", this::handleDirectoryRequest);
+
+        // Completa la promise per indicare che il verticle è avviato con successo
+        startPromise.complete();
     }
 
-    private void scanDirectory(File dir) {
-        File[] files = dir.listFiles();
+    private void handleDirectoryRequest(Message<String> message) {
+        String directoryPath = message.body(); // Percorso della directory inviato tramite event bus
+
+        // Avvia la scansione della directory in modo asincrono
+        scanDirectory(directoryPath)
+                .onSuccess(reply -> message.reply(reply)) // Rispondi al mittente con il risultato
+                .onFailure(err -> message.fail(500, err.getMessage())); // Segnala un errore al mittente
+    }
+
+    private Future<String> scanDirectory(String directoryPath) {
+        Promise<String> promise = Promise.promise();
+        File directory = new File(directoryPath);
+
+        // Verifica che la directory esista e sia una directory valida
+        if (!directory.exists() || !directory.isDirectory()) {
+            promise.fail("La directory specificata non esiste o non è una directory valida: " + directoryPath);
+            return promise.future();
+        }
+
+        //PDFBox
+        File[] files = directory.listFiles();
         if (files != null) {
+            EventBus eventBus = vertx.eventBus();
             for (File file : files) {
                 if (file.isDirectory()) {
-                    scanDirectory(file);
-                } else if (file.getName().endsWith(".pdf")) {
-                    System.out.println("File trovato: " + file.getAbsolutePath());
-                    vertx.eventBus().send("file.found", new JsonObject().put("path", file.getAbsolutePath()));
+                    // Ricorsione nelle sottodirectory
+                    scanDirectory(file.getAbsolutePath());
+                } else if (file.getName().toLowerCase().endsWith(".pdf")) {
+                    // Aggiungi il file PDF alla lista
+                    eventBus.send("pdf.files.found", file.getAbsolutePath());
                 }
             }
         }
+
+        return promise.future();
     }
 }
