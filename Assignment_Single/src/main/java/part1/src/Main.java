@@ -4,6 +4,7 @@ import part1.src.step00.SeqSearch;
 import part1.src.step01.ConcurrentSearch;
 import part1.src.step02.VirtualThreadSearch;
 import part1.src.step03.TaskBasedSearch;
+import part1.src.step05.ReactiveSearch;
 
 import java.io.File;
 import java.util.List;
@@ -30,6 +31,10 @@ public class Main {
         System.out.println("0) Sequenziale");
         System.out.println("1) Concorrente con uso di monitor e worker");
         System.out.println("2) Concorrente con Virtual Threads");
+        System.out.println("3) Concorrente con approccio a Task");
+        System.out.println("4) Concorrente con approccio Event Driven");
+        System.out.println("5) Concorrente con programmazione reattiva");
+        System.out.println("6) Concorrente con Attori");
         System.out.print("Inserisci numero:   ");
         int searchingMod = scanner.nextInt();
 
@@ -50,7 +55,7 @@ public class Main {
         switch (searchingMod) {
             case 0:
                 SeqSearch seqSearch = new SeqSearch();
-                result = seqSearch.run(pdfs, searchWord);
+                result = seqSearch.run(directoryPath, searchWord);
                 break;
             case 1:
                 ConcurrentSearch concurrentSearch = new ConcurrentSearch();
@@ -61,6 +66,9 @@ public class Main {
             case 3:
                 TaskBasedSearch taskBasedSearch = new TaskBasedSearch();
                 result = taskBasedSearch.run(directoryPath, searchWord);
+            case 5:
+                ReactiveSearch reactiveSearch = new ReactiveSearch();
+                result = reactiveSearch.run(directoryPath, searchWord);
         }
         System.out.println("La parola \"" + searchWord + "\" è contenuta in " + result + " file PDF.");
 

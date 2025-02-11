@@ -1,6 +1,9 @@
 package part1.src.step01;
 
+import part1.src.Search;
+
 import java.io.File;
+import java.io.IOException;
 
 /**
  * La classe ConcurrentSearch implementa un'architettura concorrente per la ricerca
@@ -8,7 +11,7 @@ import java.io.File;
  * Utilizza un monitor (bounded buffer) per sincronizzare i thread worker
  * che processano i file in parallelo.
  */
-public class ConcurrentSearch {
+public class ConcurrentSearch implements Search {
 
     /**
      * Avvia la ricerca concorrente della parola specificata in una directory di file PDF.
@@ -18,7 +21,7 @@ public class ConcurrentSearch {
      * @param word      La parola da cercare nei file PDF.
      * @return Il numero di file PDF in cui la parola è stata trovata.
      */
-    public int run(File directory, String word) {
+    public Integer run(File directory, String word) throws InterruptedException {
         int bufferSize = Runtime.getRuntime().availableProcessors() * 2; // Dimensione del buffer circolare
         Monitor monitor = new Monitor(bufferSize);
 

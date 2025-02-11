@@ -1,6 +1,8 @@
 package part1.src.step03;
 
 
+import part1.src.Search;
+
 import java.io.File;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -9,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * La classe {@code TaskBasedSearch} implementa una ricerca concorrente basata su task,
  * sfruttando {@code ExecutorService} per gestire la scansione della directory e la ricerca nei file PDF.
  */
-public class TaskBasedSearch {
+public class TaskBasedSearch implements Search {
 
     //Creiamo una coda 4 volte il numero di processori per evitare he si formino code, essendo che i PDF sono file "veloci".
     private static final int QUEUE_CAPACITY = Runtime.getRuntime().availableProcessors() * 4;
@@ -23,7 +25,7 @@ public class TaskBasedSearch {
      * @return Il numero di file PDF in cui è stata trovata la parola.
      * @throws InterruptedException Se il thread principale viene interrotto.
      */
-    public int run(File directory, String word) throws InterruptedException {
+    public Integer run(File directory, String word) throws InterruptedException {
         BlockingQueue<File> fileQueue = new LinkedBlockingQueue<>(QUEUE_CAPACITY);
         CountDownLatch latch = new CountDownLatch(1);
         AtomicInteger resultCount = new AtomicInteger(0);

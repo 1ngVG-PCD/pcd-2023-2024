@@ -3,11 +3,12 @@ package part1.src.step04;
 import io.vertx.core.*;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
+import part1.src.Search;
 
 import java.io.File;
 import java.util.concurrent.ExecutionException;
 
-public class EventSearch {
+public class EventSearch implements Search {
 
     public Integer run(File directory, String word) {
         int result = 0;

@@ -2,11 +2,13 @@ package part1.src.step05;
 
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import part1.src.Search;
+
 import java.io.File;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ReactiveSearch {
+public class ReactiveSearch implements Search {
 
     /**
      * Metodo per eseguire la ricerca reattiva dei file PDF contenenti una parola.
