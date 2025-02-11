@@ -53,6 +53,7 @@ public class SeqSearch implements Search {
                 // Chiama containsWord e incrementa il contatore se la parola è presente
                 if (search.containsWord(pdfFile, word)) {
                     counter++;
+                    System.out.println("File trovati: " + counter);
                 }
             } catch (IOException e) {
                 System.err.println("Errore durante la lettura del file PDF: " + pdfFile.getName() + ". " + e.getMessage());
@@ -61,5 +62,4 @@ public class SeqSearch implements Search {
 
         return counter; // Ritorna il numero di file in cui la parola è stata trovata
     }
-
 }

@@ -14,13 +14,13 @@ public class TestConcurrentSearch {
 
 
     @Test
-    void TestNone() {
+    void TestNone() throws InterruptedException {
         String word = "wow";
         assertEquals(0, search.run(directoryPath, word));
     }
 
     @Test
-    void TestMixedDirectory() {
+    void TestMixedDirectory() throws InterruptedException {
         String word = "parola";
         assertEquals(151, search.run(directoryPath, word));
     }
