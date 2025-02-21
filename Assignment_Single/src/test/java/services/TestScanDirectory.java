@@ -1,7 +1,7 @@
 package services;
 
 import org.junit.jupiter.api.Test;
-import part1.src.services.ScanDirectory;
+import part1.src.step00.ScanDirectory;
 
 import java.io.File;
 import java.util.ArrayList;

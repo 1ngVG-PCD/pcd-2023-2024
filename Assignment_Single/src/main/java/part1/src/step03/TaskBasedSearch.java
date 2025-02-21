@@ -1,7 +1,7 @@
 package part1.src.step03;
 
 
-import part1.src.Search;
+import part1.src.logic.Search;
 
 import java.io.File;
 import java.util.concurrent.*;
@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * La classe {@code TaskBasedSearch} implementa una ricerca concorrente basata su task,
  * sfruttando {@code ExecutorService} per gestire la scansione della directory e la ricerca nei file PDF.
  */
-public class TaskBasedSearch implements Search {
+public class TaskBasedSearch {
 
     //Creiamo una coda 4 volte il numero di processori per evitare he si formino code, essendo che i PDF sono file "veloci".
     private static final int QUEUE_CAPACITY = Runtime.getRuntime().availableProcessors() * 4;

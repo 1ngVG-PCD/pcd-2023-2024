@@ -2,12 +2,11 @@ package part1.src.step06;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
-import part1.src.Search;
-import part1.src.step06.CoordinatorActor;
+import part1.src.logic.Search;
 
 import java.io.File;
 
-public class ActorSearch implements Search {
+public class ActorSearch {
 
     public Integer run(File directory, String word) throws InterruptedException{
         int result = 0;

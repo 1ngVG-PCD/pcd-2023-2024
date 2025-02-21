@@ -1,4 +1,4 @@
-package part1.src;
+package part1.src.logic;
 
 public enum ProgramState {
     START,

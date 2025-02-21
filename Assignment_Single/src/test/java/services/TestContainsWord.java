@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static part1.src.services.ScanDirectory.getPdfFiles;
+import static part1.src.step00.ScanDirectory.getPdfFiles;
 
 public class TestContainsWord {
 

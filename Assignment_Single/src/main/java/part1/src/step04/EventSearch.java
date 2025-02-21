@@ -2,13 +2,11 @@ package part1.src.step04;
 
 import io.vertx.core.*;
 import io.vertx.core.eventbus.EventBus;
-import io.vertx.core.json.JsonObject;
-import part1.src.Search;
+import part1.src.logic.Search;
 
 import java.io.File;
-import java.util.concurrent.ExecutionException;
 
-public class EventSearch implements Search {
+public class EventSearch {
 
     public Integer run(File directory, String word) {
         int result = 0;

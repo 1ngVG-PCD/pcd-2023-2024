@@ -4,10 +4,8 @@ import org.junit.jupiter.api.Test;
 import part1.src.step00.SeqSearch;
 
 import java.io.File;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static part1.src.services.ScanDirectory.getPdfFiles;
 
 public class TestSeqSearch {
 

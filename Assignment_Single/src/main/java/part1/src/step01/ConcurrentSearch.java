@@ -1,9 +1,11 @@
 package part1.src.step01;
 
-import part1.src.Search;
+import part1.src.logic.OutputUpdater;
+import part1.src.logic.ProgramState;
+import part1.src.logic.Search;
+import part1.src.services.SetState;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * La classe ConcurrentSearch implementa un'architettura concorrente per la ricerca
@@ -11,8 +13,9 @@ import java.io.IOException;
  * Utilizza un monitor (bounded buffer) per sincronizzare i thread worker
  * che processano i file in parallelo.
  */
-public class ConcurrentSearch implements Search {
+public class ConcurrentSearch implements Search{
 
+    private volatile ProgramState state = ProgramState.START;
     /**
      * Avvia la ricerca concorrente della parola specificata in una directory di file PDF.
      * La scansione della directory e l'elaborazione dei file avvengono in parallelo.
@@ -21,11 +24,19 @@ public class ConcurrentSearch implements Search {
      * @param word      La parola da cercare nei file PDF.
      * @return Il numero di file PDF in cui la parola è stata trovata.
      */
-    public Integer run(File directory, String word) throws InterruptedException {
+    public Integer run(File directory, String word, OutputUpdater outputUpdater) throws InterruptedException {
+
         int bufferSize = Runtime.getRuntime().availableProcessors() * 2; // Dimensione del buffer circolare
         Monitor monitor = new Monitor(bufferSize);
 
-        // Avvia la scansione della directory in un thread separato
+        int totalFilesAnalyzed = 0, pdfFilesFound = 0, pdfFilesWithWord = 0;
+
+        // Thread per gestire l'input dell'utente
+        Thread inputThread = new Thread(new SetState(state));
+        inputThread.start();
+
+
+            // Avvia la scansione della directory in un thread separato
         Thread scannerThread = new Thread(new DirectoryScanner(directory, monitor));
         scannerThread.start();
 

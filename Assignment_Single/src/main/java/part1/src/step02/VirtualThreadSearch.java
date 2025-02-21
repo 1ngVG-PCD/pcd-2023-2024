@@ -1,6 +1,6 @@
 package part1.src.step02;
 
-import part1.src.Search;
+import part1.src.logic.Search;
 
 import java.io.File;
 
@@ -8,7 +8,7 @@ import java.io.File;
  * La classe {@code VirtualThreadSearch} implementa una ricerca concorrente basata su Virtual Threads.
  * Scansiona la directory e processa i file PDF in parallelo, utilizzando un Monitor personalizzato.
  */
-public class VirtualThreadSearch implements Search {
+public class VirtualThreadSearch {
 
     /**
      * Esegue la ricerca di una parola nei file PDF di una directory.

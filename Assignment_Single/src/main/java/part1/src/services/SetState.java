@@ -1,6 +1,6 @@
-package part1.src.step00;
+package part1.src.services;
 
-import part1.src.ProgramState;
+import part1.src.logic.ProgramState;
 
 import java.util.Scanner;
 
