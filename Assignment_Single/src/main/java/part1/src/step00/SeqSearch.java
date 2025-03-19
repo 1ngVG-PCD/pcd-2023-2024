@@ -1,10 +1,7 @@
 package part1.src.step00;
 
-import part1.src.logic.OutputUpdater;
-import part1.src.logic.ProgramState;
-import part1.src.logic.Search;
+import part1.src.logic.*;
 import part1.src.services.ContainsWord;
-import part1.src.services.SetState;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,28 +11,21 @@ import static part1.src.step00.ScanDirectory.getPdfFiles;
 
 public class SeqSearch implements Search {
 
-    private volatile ProgramState state = ProgramState.START;
+    private final ProgramStateManager stateManager = ProgramStateManager.getInstance(); // Ottieni l'istanza singleton
 
-    /**
-     * Metodo `run`: Verifica la presenza di una parola in una lista di file PDF.
-     *
-     * @param directoryPath La directory contenente i file PDF da processare.
-     * @param word La parola da cercare.
-     * @return Il numero di file in cui la parola è stata trovata.
-     */
-    public Integer run(File directoryPath, String word, OutputUpdater outputUpdater) {
+    @Override
+    public Integer run(File directoryPath, String word, OutputUpdater outputUpdater) throws InterruptedException {
         List<File> pdfs = getPdfFiles(directoryPath);
         int totalFilesAnalyzed = 0, pdfFilesFound = 0, pdfFilesWithWord = 0;
         ContainsWord search = new ContainsWord();
 
         // Thread per gestire l'input dell'utente
-        Thread inputThread = new Thread(new SetState(state));
+        Thread inputThread = new Thread(new SetState());
         inputThread.start();
 
         for (File pdfFile : pdfs) {
-
             // Controlla lo stato del programma
-            while (state == ProgramState.PAUSE) {
+            while (stateManager.getState() == ProgramState.PAUSE) {
                 try {
                     Thread.sleep(100); // Attendi prima di controllare nuovamente lo stato
                 } catch (InterruptedException e) {
@@ -45,9 +35,10 @@ public class SeqSearch implements Search {
                 }
             }
 
-            if (state == ProgramState.STOP) {
+            if (stateManager.getState() == ProgramState.STOP) {
                 break; // Interrompi il ciclo se lo stato è STOP
             }
+
             totalFilesAnalyzed++;
             try {
                 // Chiama containsWord e incrementa il contatore se la parola è presente
@@ -59,6 +50,7 @@ public class SeqSearch implements Search {
                 System.err.println("Errore durante la lettura del file PDF: " + pdfFile.getName() + ". " + e.getMessage());
             }
             outputUpdater.update(totalFilesAnalyzed, pdfFilesFound, pdfFilesWithWord);
+            Thread.sleep(100);
         }
 
         return pdfFilesWithWord; // Ritorna il numero di file in cui la parola è stata trovata

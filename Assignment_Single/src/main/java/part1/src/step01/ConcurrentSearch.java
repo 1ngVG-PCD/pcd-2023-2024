@@ -1,9 +1,6 @@
 package part1.src.step01;
 
-import part1.src.logic.OutputUpdater;
-import part1.src.logic.ProgramState;
-import part1.src.logic.Search;
-import part1.src.services.SetState;
+import part1.src.logic.*;
 
 import java.io.File;
 
@@ -15,7 +12,8 @@ import java.io.File;
  */
 public class ConcurrentSearch implements Search{
 
-    private volatile ProgramState state = ProgramState.START;
+    private final ProgramStateManager stateManager = ProgramStateManager.getInstance(); // Ottieni l'istanza singleton
+
     /**
      * Avvia la ricerca concorrente della parola specificata in una directory di file PDF.
      * La scansione della directory e l'elaborazione dei file avvengono in parallelo.
@@ -32,11 +30,10 @@ public class ConcurrentSearch implements Search{
         int totalFilesAnalyzed = 0, pdfFilesFound = 0, pdfFilesWithWord = 0;
 
         // Thread per gestire l'input dell'utente
-        Thread inputThread = new Thread(new SetState(state));
+        Thread inputThread = new Thread(new SetState());
         inputThread.start();
 
-
-            // Avvia la scansione della directory in un thread separato
+        // Avvia la scansione della directory in un thread separato
         Thread scannerThread = new Thread(new DirectoryScanner(directory, monitor));
         scannerThread.start();
 

@@ -1,33 +1,30 @@
-package part1.src.services;
-
-import part1.src.logic.ProgramState;
+package part1.src.logic;
 
 import java.util.Scanner;
 
-public class SetState extends Thread{
-    private volatile ProgramState state;
+public class SetState extends Thread {
+    private final ProgramStateManager stateManager;
 
-    public SetState(ProgramState state){
-        this.state = state;
+    public SetState() {
+        this.stateManager = ProgramStateManager.getInstance(); // Ottieni l'istanza singleton
     }
 
     @Override
-    public void run(){
-
+    public void run() {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String input = scanner.nextLine().trim().toLowerCase();
             switch (input) {
                 case "start":
-                    state = ProgramState.START;
+                    stateManager.setState(ProgramState.START);
                     System.out.println("Programma avviato/ripreso.");
                     break;
                 case "pause":
-                    state = ProgramState.PAUSE;
+                    stateManager.setState(ProgramState.PAUSE);
                     System.out.println("Programma in pausa.");
                     break;
                 case "stop":
-                    state = ProgramState.STOP;
+                    stateManager.setState(ProgramState.STOP);
                     System.out.println("Programma terminato.");
                     return; // Termina il thread
                 default:

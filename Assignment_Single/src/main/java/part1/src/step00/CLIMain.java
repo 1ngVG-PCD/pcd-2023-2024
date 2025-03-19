@@ -7,12 +7,12 @@ import java.util.Scanner;
 
 public class CLIMain implements OutputUpdater {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         CLIMain cliMain = new CLIMain();
         cliMain.start();
     }
 
-    public void start() {
+    public void start() throws InterruptedException {
 
         Scanner scanner = new Scanner(System.in);
 

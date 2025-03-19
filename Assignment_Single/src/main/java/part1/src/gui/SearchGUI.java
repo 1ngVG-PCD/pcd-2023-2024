@@ -1,6 +1,7 @@
 package part1.src.gui;
 
 import part1.src.logic.ProgramState;
+import part1.src.logic.ProgramStateManager;
 import part1.src.logic.Search;
 
 import javax.swing.*;
@@ -11,7 +12,7 @@ import java.io.File;
 
 public class SearchGUI extends JFrame {
 
-    private volatile ProgramState state = ProgramState.START; // Stato condiviso
+    private final ProgramStateManager stateManager = ProgramStateManager.getInstance();
     private JTextField directoryPathField; // Input box per il percorso della directory
     private JTextField wordField; // Input box per la parola da cercare
     private JTextArea outputArea; // Output box per i risultati
@@ -97,29 +98,32 @@ public class SearchGUI extends JFrame {
         // Resetta i contatori
         outputArea.setText(""); // Pulisci l'output box
 
+        // Imposta lo stato su START
+        stateManager.setState(ProgramState.START);
+
         // Avvia il thread per l'elaborazione
         new Thread(() -> {
-            state = ProgramState.START;
             int result = 0;
             try {
                 result = searchLogic.run(new File(directoryPath), word, this::updateOutput);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                Thread.currentThread().interrupt();
+                JOptionPane.showMessageDialog(this, "Elaborazione interrotta.", "Errore", JOptionPane.ERROR_MESSAGE);
             }
             JOptionPane.showMessageDialog(this, "Elaborazione completata. File trovati: " + result, "Completato", JOptionPane.INFORMATION_MESSAGE);
         }).start();
     }
 
     private void stopSearch() {
-        state = ProgramState.STOP;
+        stateManager.setState(ProgramState.STOP);
     }
 
     private void suspendSearch() {
-        state = ProgramState.PAUSE;
+        stateManager.setState(ProgramState.PAUSE);
     }
 
     private void resumeSearch() {
-        state = ProgramState.START;
+        stateManager.setState(ProgramState.START);
     }
 
     public void updateOutput(int totalFilesAnalyzed, int pdfFilesFound, int pdfFilesWithWord) {
