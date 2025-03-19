@@ -50,7 +50,7 @@ public class SeqSearch implements Search {
                 System.err.println("Errore durante la lettura del file PDF: " + pdfFile.getName() + ". " + e.getMessage());
             }
             outputUpdater.update(totalFilesAnalyzed, pdfFilesFound, pdfFilesWithWord);
-            Thread.sleep(100);
+            Thread.sleep(0);
         }
 
         return pdfFilesWithWord; // Ritorna il numero di file in cui la parola è stata trovata

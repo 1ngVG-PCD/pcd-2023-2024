@@ -90,6 +90,11 @@ public class SearchGUI extends JFrame {
         String directoryPath = directoryPathField.getText();
         String word = wordField.getText();
 
+        if(stateManager.getState() == ProgramState.PAUSE){
+            stateManager.setState(ProgramState.START);
+            return;
+        }
+
         if (directoryPath.isEmpty() || word.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Inserisci sia il percorso della directory che la parola da cercare.", "Errore", JOptionPane.ERROR_MESSAGE);
             return;
