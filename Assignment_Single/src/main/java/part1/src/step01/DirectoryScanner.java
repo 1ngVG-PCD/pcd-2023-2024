@@ -61,7 +61,6 @@ public class DirectoryScanner implements Runnable {
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
                             System.err.println("Thread interrotto.");
-                            //return pdfFilesWithWord;
                         }
                     }
                 }
