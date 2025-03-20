@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="part1.step01.TestSeqSearch" tests="2" skipped="0" failures="0" errors="0" timestamp="2025-03-20T14:11:38" hostname="MSI" time="1.23">
+  <properties/>
+  <testcase name="TestNone()" classname="part1.step01.TestSeqSearch" time="1.095"/>
+  <testcase name="TestMixedDirectory()" classname="part1.step01.TestSeqSearch" time="0.132"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[Exception in thread "Thread-4" java.util.NoSuchElementException: No line found
+	at java.base/java.util.Scanner.nextLine(Scanner.java:1660)
+	at part1.src.logic.SetState.run(SetState.java:16)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+Exception in thread "Thread-23" java.util.NoSuchElementException: No line found
+	at java.base/java.util.Scanner.nextLine(Scanner.java:1660)
+	at part1.src.logic.SetState.run(SetState.java:16)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+]]></system-err>
+</testsuite>
