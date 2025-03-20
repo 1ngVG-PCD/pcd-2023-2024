@@ -1,5 +1,7 @@
 package part1.src.step01;
 
+import part1.src.logic.ProgramState;
+import part1.src.logic.ProgramStateManager;
 import part1.src.services.ContainsWord;
 
 import java.io.File;
@@ -24,6 +26,8 @@ public class Worker extends Thread {
         this.searchWord = searchWord;
     }
 
+    private final ProgramStateManager stateManager = ProgramStateManager.getInstance(); // Ottieni l'istanza singleton
+
     /**
      * Esegue il lavoro del thread.
      * Preleva i file PDF dal monitor e verifica se ciascun file contiene la parola specificata.
@@ -36,8 +40,23 @@ public class Worker extends Thread {
         try {
             File pdfFile;
             while ((pdfFile = monitor.getFile()) != null) {
-                if (search.containsWord(pdfFile, searchWord)) {
-                    monitor.incrementResultCount();
+                if (stateManager.getState()== ProgramState.START){
+                    monitor.incrementFilesAnalyzed();
+                    if (search.containsWord(pdfFile, searchWord)){
+                        monitor.incrementFilesWord();
+                    }
+                }  else if ((stateManager.getState()== ProgramState.STOP)){
+                    break;
+                } else {
+                    while(stateManager.getState()==ProgramState.PAUSE){
+                        try {
+                            Thread.sleep(100); // Attendi prima di controllare nuovamente lo stato
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            System.err.println("Thread interrotto.");
+                            //return pdfFilesWithWord;
+                        }
+                    }
                 }
             }
         } catch (InterruptedException e) {

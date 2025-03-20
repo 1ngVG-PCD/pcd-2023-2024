@@ -16,7 +16,7 @@ public class SeqSearch implements Search {
     @Override
     public Integer run(File directoryPath, String word, OutputUpdater outputUpdater) throws InterruptedException {
         List<File> pdfs = getPdfFiles(directoryPath);
-        int totalFilesAnalyzed = 0, pdfFilesFound = 0, pdfFilesWithWord = 0;
+        SearchResult result = new SearchResult(0, 0, 0); // Inizializza il record con valori iniziali
         ContainsWord search = new ContainsWord();
 
         // Thread per gestire l'input dell'utente
@@ -31,7 +31,7 @@ public class SeqSearch implements Search {
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     System.err.println("Thread interrotto.");
-                    return pdfFilesWithWord;
+                    return result.pdfFilesWithWord();
                 }
             }
 
@@ -39,20 +39,21 @@ public class SeqSearch implements Search {
                 break; // Interrompi il ciclo se lo stato è STOP
             }
 
-            totalFilesAnalyzed++;
+            result = new SearchResult(result.totalFilesAnalyzed() + 1, result.pdfFilesFound(), result.pdfFilesWithWord());
             try {
                 // Chiama containsWord e incrementa il contatore se la parola è presente
                 if (search.containsWord(pdfFile, word)) {
-                    pdfFilesWithWord++;
+                    result = new SearchResult(result.totalFilesAnalyzed(), result.pdfFilesFound() + 1, result.pdfFilesWithWord() + 1);
+                } else {
+                    result = new SearchResult(result.totalFilesAnalyzed(), result.pdfFilesFound() + 1, result.pdfFilesWithWord());
                 }
-                pdfFilesFound++;
             } catch (IOException e) {
                 System.err.println("Errore durante la lettura del file PDF: " + pdfFile.getName() + ". " + e.getMessage());
             }
-            outputUpdater.update(totalFilesAnalyzed, pdfFilesFound, pdfFilesWithWord);
+            outputUpdater.update(result.totalFilesAnalyzed(), result.pdfFilesFound(), result.pdfFilesWithWord());
             Thread.sleep(0);
         }
 
-        return pdfFilesWithWord; // Ritorna il numero di file in cui la parola è stata trovata
+        return result.pdfFilesWithWord(); // Ritorna il numero di file in cui la parola è stata trovata
     }
 }

@@ -1,5 +1,8 @@
 package part1.src.step01;
 
+import part1.src.logic.ProgramState;
+import part1.src.logic.ProgramStateManager;
+
 import java.io.File;
 
 /**
@@ -21,6 +24,8 @@ public class DirectoryScanner implements Runnable {
         this.monitor = monitor;
     }
 
+    private final ProgramStateManager stateManager = ProgramStateManager.getInstance(); // Ottieni l'istanza singleton
+
     @Override
     public void run() {
         try {
@@ -40,10 +45,25 @@ public class DirectoryScanner implements Runnable {
         File[] files = dir.listFiles();
         if (files != null) {
             for (File file : files) {
-                if (file.isDirectory()) {
-                    scanDirectory(file);
-                } else if (file.getName().endsWith(".pdf")) {
-                    monitor.addFile(file);
+                if(stateManager.getState()== ProgramState.START){
+                    if (file.isDirectory()) {
+                        scanDirectory(file);
+                    } else if (file.getName().endsWith(".pdf")) {
+                        monitor.addFile(file);
+                        monitor.incrementFilesFound();
+                    }
+                } else if (stateManager.getState()==ProgramState.STOP){
+                    break;
+                }else{
+                    while(stateManager.getState()==ProgramState.PAUSE){
+                        try {
+                            Thread.sleep(100); // Attendi prima di controllare nuovamente lo stato
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            System.err.println("Thread interrotto.");
+                            //return pdfFilesWithWord;
+                        }
+                    }
                 }
             }
         }

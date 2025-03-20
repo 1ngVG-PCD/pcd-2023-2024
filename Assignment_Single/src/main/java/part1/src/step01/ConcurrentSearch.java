@@ -12,8 +12,6 @@ import java.io.File;
  */
 public class ConcurrentSearch implements Search{
 
-    private final ProgramStateManager stateManager = ProgramStateManager.getInstance(); // Ottieni l'istanza singleton
-
     /**
      * Avvia la ricerca concorrente della parola specificata in una directory di file PDF.
      * La scansione della directory e l'elaborazione dei file avvengono in parallelo.
@@ -25,9 +23,7 @@ public class ConcurrentSearch implements Search{
     public Integer run(File directory, String word, OutputUpdater outputUpdater) throws InterruptedException {
 
         int bufferSize = Runtime.getRuntime().availableProcessors() * 2; // Dimensione del buffer circolare
-        Monitor monitor = new Monitor(bufferSize);
-
-        int totalFilesAnalyzed = 0, pdfFilesFound = 0, pdfFilesWithWord = 0;
+        Monitor monitor = new Monitor(bufferSize, outputUpdater);
 
         // Thread per gestire l'input dell'utente
         Thread inputThread = new Thread(new SetState());
@@ -64,6 +60,6 @@ public class ConcurrentSearch implements Search{
             }
         }
 
-        return monitor.getResultCount();
+        return monitor.getResult();
     }
 }
