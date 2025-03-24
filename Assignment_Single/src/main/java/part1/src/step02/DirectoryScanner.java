@@ -3,7 +3,6 @@ package part1.src.step02;
 import part1.src.logic.ProgramState;
 import part1.src.logic.ProgramStateManager;
 
-
 import java.io.File;
 
 /**
@@ -13,6 +12,7 @@ import java.io.File;
 public class DirectoryScanner implements Runnable {
     private final File directory;
     private final Monitor monitor;
+    private final String word;
 
     /**
      * Costruttore della classe DirectoryScanner.
@@ -20,9 +20,10 @@ public class DirectoryScanner implements Runnable {
      * @param directory La directory da analizzare.
      * @param monitor   Il monitor condiviso per la sincronizzazione con i worker.
      */
-    public DirectoryScanner(File directory, Monitor monitor) {
+    public DirectoryScanner(File directory, Monitor monitor, String word) {
         this.directory = directory;
         this.monitor = monitor;
+        this.word = word;
     }
 
     private final ProgramStateManager stateManager = ProgramStateManager.getInstance(); // Ottieni l'istanza singleton
@@ -30,7 +31,7 @@ public class DirectoryScanner implements Runnable {
     @Override
     public void run() {
         try {
-            scanDirectory(directory);
+            scanDirectory(directory, monitor, word);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -42,20 +43,19 @@ public class DirectoryScanner implements Runnable {
      * @param dir La directory da analizzare.
      * @throws InterruptedException Se il thread viene interrotto.
      */
-    private void scanDirectory(File dir) throws InterruptedException {
+    private void scanDirectory(File dir, Monitor mon, String word) throws InterruptedException {
         File[] files = dir.listFiles();
-
         if (files != null) {
-            int w = 0;
-            Thread[] workers = new Thread[files.length];
             for (File file : files) {
                 if(stateManager.getState()== ProgramState.START){
                     if (file.isDirectory()) {
-                        scanDirectory(file);
+                        scanDirectory(file, monitor, word);
                     } else if (file.getName().endsWith(".pdf")) {
                         monitor.incrementFilesFound();
-                        workers[w] = WorkerFactory.createWorker(monitor, file);
-                        WorkerFactory.SartWorker((Worker) workers[w]);
+                        // Se è un file, crea un nuovo virtual thread per elaborarlo
+                        Thread.startVirtualThread(() -> {
+                            WorkerFactory.createWorker(monitor, word).run(file);
+                        });
                     }
                 } else if (stateManager.getState()==ProgramState.STOP){
                     break;
@@ -68,14 +68,6 @@ public class DirectoryScanner implements Runnable {
                             System.err.println("Thread interrotto.");
                         }
                     }
-                }
-            }
-            // Aspetta la terminazione di tutti i worker
-            for (Thread worker : workers ) {
-                try {
-                    worker.join();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
                 }
             }
         }

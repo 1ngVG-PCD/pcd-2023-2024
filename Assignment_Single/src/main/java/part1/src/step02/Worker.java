@@ -13,17 +13,17 @@ import java.io.IOException;
  */
 public class Worker extends Thread {
     private final Monitor monitor; // Riferimento al monitor condiviso
-    private final File pdfFile;
+    private final String searchWord; // Parola da cercare nei file PDF
 
     /**
      * Crea un nuovo Worker.
      *
      * @param monitor    Il monitor condiviso utilizzato per accedere ai file PDF.
-     * @param pdfFile Il file in cui cercare la parola
+     * @param searchWord La parola da cercare all'interno dei file PDF.
      */
-    public Worker(Monitor monitor, File pdfFile) {
+    public Worker(Monitor monitor, String searchWord) {
         this.monitor = monitor;
-        this.pdfFile = pdfFile;
+        this.searchWord = searchWord;
     }
 
     private final ProgramStateManager stateManager = ProgramStateManager.getInstance(); // Ottieni l'istanza singleton
@@ -34,31 +34,33 @@ public class Worker extends Thread {
      * Se la parola viene trovata, aggiorna il contatore dei risultati nel monitor.
      * Gestisce eventuali interruzioni o errori di I/O.
      */
-    @Override
-    public void run() {
-        ContainsWord search = new ContainsWord();
-        String searchWord = monitor.getWord();
 
-        if (stateManager.getState() == ProgramState.START) {
-            monitor.incrementFilesAnalyzed();
-            try {
-                if (search.containsWord(pdfFile, searchWord)) {
+    public void run(File pdfFile) {
+        monitor.workerStarted();
+        ContainsWord search = new ContainsWord();
+        try {
+            if (stateManager.getState()== ProgramState.START){
+                monitor.incrementFilesAnalyzed();
+                if (search.containsWord(pdfFile, searchWord)){
                     monitor.incrementFilesWord();
                 }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        } else if (stateManager.getState() == ProgramState.STOP) {
-            Thread.currentThread().interrupt();
-        } else {
-            while (stateManager.getState() == ProgramState.PAUSE) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    System.err.println("Thread interrotto.");
+            }  else if ((stateManager.getState()== ProgramState.STOP)){
+                Thread.currentThread().interrupt();
+            } else {
+                while(stateManager.getState()==ProgramState.PAUSE){
+                    try {
+                        Thread.sleep(100); // Attendi prima di controllare nuovamente lo stato
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        System.err.println("Thread interrotto.");
+                    }
                 }
             }
+        } catch (IOException e) {
+            // Gestisce errori di I/O durante l'elaborazione dei file
+            System.err.println("Errore durante la lettura del file PDF: " + e.getMessage());
+        }finally {
+            monitor.workerFinished();
         }
     }
 }

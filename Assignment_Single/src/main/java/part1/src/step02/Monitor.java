@@ -4,22 +4,18 @@ import part1.src.logic.OutputUpdater;
 import part1.src.logic.SearchResult;
 
 import java.io.File;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Monitor {
-    private final String searchWord;
     private boolean isFinished = false; // Flag per segnalare la terminazione
     private final OutputUpdater outputUpdater;
+    private final AtomicInteger activeWorkers = new AtomicInteger(0);
+    private final Object completionLock = new Object();
 
-    public Monitor(String searchWord, OutputUpdater outputUpdater) {
+    public Monitor(OutputUpdater outputUpdater) {
         this.outputUpdater = outputUpdater;
-        this.searchWord = searchWord;
     }
 
-    /**
-     * Restituisce un file dal buffer.
-     * Se il buffer è vuoto, il thread viene messo in attesa.
-     * Restituisce null se il produttore ha terminato e il buffer è vuoto.
-     */
 
     SearchResult result = new SearchResult(0,0,0);
     /**
@@ -53,10 +49,34 @@ public class Monitor {
     public synchronized void setFinished() {
         isFinished = true; // Il produttore ha terminato
         notifyAll(); // Risveglia i thread in attesa
+        checkCompletion();
     }
 
-    public synchronized String getWord () {
-        return searchWord;
+    public void workerStarted() {
+        activeWorkers.incrementAndGet();
+    }
+
+    public void workerFinished() {
+        int remaining = activeWorkers.decrementAndGet();
+        if (remaining == 0) {
+            checkCompletion();
+        }
+    }
+
+    private void checkCompletion() {
+        synchronized (completionLock) {
+            if (isFinished && activeWorkers.get() == 0) {
+                completionLock.notifyAll();
+            }
+        }
+    }
+
+    public void waitForCompletion() throws InterruptedException {
+        synchronized (completionLock) {
+            while (!isFinished || activeWorkers.get() > 0) {
+                completionLock.wait();
+            }
+        }
     }
 }
 
