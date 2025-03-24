@@ -19,7 +19,6 @@ public class VirtualThreadSearch implements Search {
         // Avvia la scansione della directory in un virtual thread separato che gestisce la creazione di altri virtual thread
         Thread scannerThread = Thread.startVirtualThread((new DirectoryScanner(directory, monitor, word)));
 
-
         try {
             // Aspetta che la scansione termini
             scannerThread.join();
