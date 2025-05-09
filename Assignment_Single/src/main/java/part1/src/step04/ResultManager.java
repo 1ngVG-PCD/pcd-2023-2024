@@ -1,4 +1,4 @@
-package part1.src.step03;
+package part1.src.step04;
 
 import part1.src.logic.OutputUpdater;
 import part1.src.logic.SearchResult;
@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class ResultManager {
     private final AtomicReference<SearchResult> result = new AtomicReference<>(new SearchResult(0, 0, 0));
-    private final OutputUpdater outputUpdater; // Supponiamo che esista questa dipendenza
+    private final OutputUpdater outputUpdater;
 
     public ResultManager(OutputUpdater outputUpdater) {
         this.outputUpdater = outputUpdater;
@@ -49,8 +49,9 @@ public class ResultManager {
         });
     }
 
-    public int getResult() {
-        return result.get().pdfFilesWithWord();
-    }
+    public int getResult() {return result.get().pdfFilesWithWord();}
 
+    public int getAnalyzed() {return result.get().totalFilesAnalyzed();}
+
+    public int getFilesFound() {return result.get().pdfFilesFound();}
 }
