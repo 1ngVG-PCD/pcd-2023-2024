@@ -1,16 +1,16 @@
-package part1.step02;
+package part1.step05;
 
 import org.junit.jupiter.api.Test;
-import part1.src.step02.VirtualThreadSearch;
+import part1.src.step05.ReactiveSearch;
 
 import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TestSeqSearch {
+public class TestReactiveSearch {
 
     File directoryPath = new File("C:\\Users\\giann\\Desktop\\PCD\\pcd-2023-2024\\Assignment_Single\\src\\main\\java\\part1\\TestSet");
-    VirtualThreadSearch search = new VirtualThreadSearch();
+    ReactiveSearch search = new ReactiveSearch();
     MockOutputUpdater outputUpdater = new MockOutputUpdater(); // Mock per OutputUpdater
 
     @Test

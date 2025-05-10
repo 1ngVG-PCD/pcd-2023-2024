@@ -1,14 +1,13 @@
 package part1.step01;
 
 import org.junit.jupiter.api.Test;
-import part1.src.step00.SeqSearch;
 import part1.src.step01.ConcurrentSearch;
 
 import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TestSeqSearch {
+public class TestConcurrentSearch {
 
     File directoryPath = new File("C:\\Users\\giann\\Desktop\\PCD\\pcd-2023-2024\\Assignment_Single\\src\\main\\java\\part1\\TestSet");
     ConcurrentSearch search = new ConcurrentSearch();
