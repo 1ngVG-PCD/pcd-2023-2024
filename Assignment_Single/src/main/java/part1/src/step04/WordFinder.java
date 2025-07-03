@@ -4,6 +4,8 @@ import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
+import part1.src.logic.ProgramState;
+import part1.src.logic.ProgramStateManager;
 import part1.src.services.ContainsWord;
 
 import java.io.File;
@@ -40,9 +42,30 @@ public class WordFinder {
         File pdfFile = new File(filePath);
         vertx.executeBlocking(promise -> {
             try {
-                resultManager.incrementFilesAnalyzed();
-                if (search.containsWord(pdfFile, word)) {
-                    resultManager.incrementFilesWord();
+                ProgramState state = ProgramStateManager.getInstance().getState();
+
+                // Gestione STOP
+                if (state == ProgramState.STOP) {
+                    startPromise.complete();
+                    return;
+                }
+
+                // Gestione PAUSE
+                while (state == ProgramState.PAUSE) {
+                    Thread.sleep(100); // Pausa breve
+                    state = ProgramStateManager.getInstance().getState();
+                    if (state == ProgramState.STOP) {
+                        startPromise.complete();
+                        return;
+                    }
+                }
+
+                // Procedi solo se START
+                if (state == ProgramState.START) {
+                    resultManager.incrementFilesAnalyzed();
+                    if (search.containsWord(pdfFile, word)) {
+                        resultManager.incrementFilesWord();
+                    }
                 }
                 promise.complete();
             } catch (Exception e) {

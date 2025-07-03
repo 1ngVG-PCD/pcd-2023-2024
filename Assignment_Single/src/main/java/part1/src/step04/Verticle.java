@@ -6,6 +6,8 @@ import io.vertx.core.Vertx;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.file.FileSystem;
+import part1.src.logic.ProgramState;
+import part1.src.logic.ProgramStateManager;
 import part1.src.services.ContainsWord;
 
 import java.io.File;
@@ -25,6 +27,11 @@ public class Verticle extends AbstractVerticle {
 
     @Override
     public void start(Promise<Void> startPromise) {
+        if (ProgramStateManager.getInstance().getState() == ProgramState.STOP) {
+            startPromise.complete();
+            return;
+        }
+
         FileSystem fs = vertx.fileSystem();
         ContainsWord search = new ContainsWord();
 
@@ -33,6 +40,10 @@ public class Verticle extends AbstractVerticle {
         countTotalPdfFiles(String.valueOf(directory), vertx, totalFilesPromise);
 
         totalFilesPromise.future().compose(totalFiles -> {
+                    if (ProgramStateManager.getInstance().getState() == ProgramState.STOP) {
+                        startPromise.complete();
+                        return Future.succeededFuture();
+                    }
                     if (totalFiles == 0) {
                         System.out.println("Nessun file PDF trovato nella directory o sottodirectory");
                         startPromise.complete();
@@ -42,13 +53,15 @@ public class Verticle extends AbstractVerticle {
                     // Cerca PDF nella directory corrente
                     return fs.readDir(String.valueOf(directory), ".*\\.pdf")
                             .compose(files -> {
-                                for (String filePath : files) {
-                                    resultManager.incrementFilesFound();
-                                    WordFinder.analyzePdf(filePath, resultManager, word, vertx, startPromise, totalFiles);
+                                if (ProgramStateManager.getInstance().getState() != ProgramState.STOP) {
+                                    for (String filePath : files) {
+                                        resultManager.incrementFilesFound();
+                                        WordFinder.analyzePdf(filePath, resultManager, word, vertx, startPromise, totalFiles);
+                                    }
+                                    // Avvia la ricerca ricorsiva nelle sottodirectory
+                                    return WordFinder.recursivePdfSearch(String.valueOf(directory), resultManager, word, vertx, startPromise, totalFiles);
                                 }
-
-                                // Avvia la ricerca ricorsiva nelle sottodirectory
-                                return WordFinder.recursivePdfSearch(String.valueOf(directory), resultManager, word, vertx, startPromise, totalFiles);
+                                return Future.succeededFuture();
                             });
                 })
                 .onFailure(err -> {
