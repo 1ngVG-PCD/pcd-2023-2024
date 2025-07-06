@@ -16,7 +16,7 @@ dependencies {
     testImplementation ("org.junit.jupiter:junit-jupiter-api:5.11.1")
     testRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:5.11.2")
     testImplementation("io.vertx:vertx-junit5:4.5.9")
-    testImplementation("com.typesafe.akka:akka-actor-testkit-typed_2.13:2.8.6")
+    testImplementation("com.typesafe.akka:akka-actor-testkit-typed_2.13:2.8.7")
 
         implementation("org.apache.pdfbox:pdfbox:3.0.3")
         implementation("org.apache.pdfbox:preflight:3.0.2")

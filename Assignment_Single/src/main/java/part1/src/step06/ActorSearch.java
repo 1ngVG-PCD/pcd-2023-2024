@@ -1,11 +1,12 @@
 package part1.src.step06;
 
-import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
 import part1.src.logic.*;
 import part1.src.services.ContainsWord;
 
 import java.io.File;
+import java.util.concurrent.CompletableFuture;
 
 public class ActorSearch implements Search {
     private ResultManager resultManager;
@@ -18,14 +19,24 @@ public class ActorSearch implements Search {
     @Override
     public Integer run(File directory, String word, OutputUpdater outputUpdater) {
         resultManager = new ResultManager(outputUpdater);
+        CompletableFuture<Integer> future = new CompletableFuture<>();
 
-        // Thread per gestire l'input dell'utente
         Thread inputThread = new Thread(new SetState());
         inputThread.setDaemon(true);
         inputThread.start();
 
+        ActorSystem system = ActorSystem.create("SearchSystem");
+        ActorRef searchActor = system.actorOf(SearchActor.props(resultManager, future), "searchActor");
 
-        return resultManager.getResult();
+        searchActor.tell(new Messages.StartSearch(directory, word), ActorRef.noSender());
+
+        try {
+            Integer result = future.get(); // Attende il completamento effettivo
+            system.terminate();
+            return result;
+        } catch (Exception e) {
+            system.terminate();
+            return 0;
+        }
     }
 }
-
